@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía Práctica — Ciberseguridad</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B0E17;
+  --bg2: #111827;
+  --bg3: #1A2035;
+  --surface: #1E293B;
+  --surface2: #253349;
+  --border: #2D3B52;
+  --accent: #38BDF8;
+  --accent2: #818CF8;
+  --accent3: #34D399;
+  --danger: #F87171;
+  --warn: #FBBF24;
+  --text: #E2E8F0;
+  --text2: #94A3B8;
+  --text3: #64748B;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* LAYOUT */
+.container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+/* HERO */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; left: 50%;
+  transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(56,189,248,0.1);
+  border: 1px solid rgba(56,189,248,0.2);
+  border-radius: 100px;
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 24px;
+  letter-spacing: 0.5px;
+}
+.hero h1 {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #E2E8F0 30%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero p {
+  font-size: 17px;
+  color: var(--text2);
+  max-width: 600px;
+  margin: 0 auto 32px;
+}
+
+/* NAV TOC */
+.toc {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 48px;
+}
+.toc-title { font-size: 14px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; font-weight: 600; }
+.toc-list { list-style: none; }
+.toc-list li { margin-bottom: 8px; }
+.toc-list a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  transition: color 0.2s;
+}
+.toc-list a:hover { color: #7DD3FC; }
+.toc-list .num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text3);
+  min-width: 28px;
+}
+
+/* SECTIONS */
+.module {
+  margin-bottom: 64px;
+  scroll-margin-top: 32px;
+}
+.module-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.module-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.module-icon.blue { background: rgba(56,189,248,0.15); }
+.module-icon.purple { background: rgba(129,140,248,0.15); }
+.module-icon.green { background: rgba(52,211,153,0.15); }
+.module-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+.module-header p { font-size: 14px; color: var(--text3); margin-top: 2px; }
+
+/* CONTENT BLOCKS */
+.concept {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.concept h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+.concept p, .concept li {
+  font-size: 15px;
+  color: var(--text2);
+  margin-bottom: 8px;
+}
+.concept ul { padding-left: 20px; }
+
+/* CODE / VECTOR */
+.vector-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  overflow-x: auto;
+}
+
+/* STEP BY STEP */
+.steps { counter-reset: step; }
+.step {
+  position: relative;
+  padding-left: 52px;
+  margin-bottom: 28px;
+  min-height: 40px;
+}
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0; top: 0;
+  width: 36px; height: 36px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 600;
+}
+.step h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.step p { font-size: 14px; color: var(--text2); }
+.step a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed rgba(56,189,248,0.3); }
+.step a:hover { border-bottom-color: var(--accent); }
+
+/* EXERCISES */
+.exercise {
+  background: var(--bg2);
+  border-left: 3px solid var(--accent2);
+  border-radius: 0 10px 10px 0;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.exercise.green-border { border-left-color: var(--accent3); }
+.exercise.warn-border { border-left-color: var(--warn); }
+.exercise-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.exercise-label.purple { color: var(--accent2); }
+.exercise-label.green { color: var(--accent3); }
+.exercise-label.warn { color: var(--warn); }
+.exercise h4 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+.exercise p, .exercise li { font-size: 14px; color: var(--text2); margin-bottom: 6px; }
+.exercise ol, .exercise ul { padding-left: 20px; }
+
+/* COLLAPSIBLE HINTS */
+details {
+  margin-top: 12px;
+}
+summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--accent3);
+  font-weight: 500;
+  padding: 8px 0;
+  user-select: none;
+  list-style: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::before { content: '▸ '; }
+details[open] summary::before { content: '▾ '; }
+.hint-content {
+  background: rgba(52,211,153,0.06);
+  border: 1px solid rgba(52,211,153,0.15);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: var(--text2);
+  margin-top: 8px;
+  line-height: 1.6;
+}
+.hint-content code {
+  font-family: var(--mono);
+  background: var(--surface);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--accent);
+}
+
+/* TABLE */
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+}
+.ref-table th {
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border);
+}
+.ref-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+}
+.ref-table tr:hover td { background: rgba(56,189,248,0.03); }
+.ref-table code {
+  font-family: var(--mono);
+  color: var(--accent);
+  font-size: 13px;
+}
+
+/* CALLOUT */
+.callout {
+  display: flex;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+  font-size: 14px;
+}
+.callout.info { background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.15); }
+.callout.warn { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.15); }
+.callout.danger { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.15); }
+.callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.callout p { color: var(--text2); }
+.callout strong { color: var(--text); }
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 40px 0 60px;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+.footer p { font-size: 13px; color: var(--text3); }
+
+/* LINK LIST */
+.link-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0;
+}
+.link-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.link-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.link-card .icon { font-size: 20px; }
+
+@media (max-width: 640px) {
+  .link-grid { grid-template-columns: 1fr; }
+  .container { padding: 0 16px; }
+  .hero { padding: 48px 0 40px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">📘 Material de preparación</div>
+  <h1>Guía Práctica de Herramientas de Ciberseguridad</h1>
+  <p>Tutorial paso a paso para dominar CVSS, CVE y MITRE ATT&CK. Incluye ejercicios prácticos con las herramientas oficiales que utilizarás en la evaluación.</p>
+</section>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-title">Contenido de la guía</div>
+  <ol class="toc-list">
+    <li><a href="#mod1"><span class="num">01</span> CVSS — Calculadora y análisis de vectores</a></li>
+    <li><a href="#mod2"><span class="num">02</span> CVE — Consulta y análisis en cve.org</a></li>
+    <li><a href="#mod3"><span class="num">03</span> MITRE ATT&CK — Navegación y mapeo de adversarios</a></li>
+    <li><a href="#mod4"><span class="num">04</span> Ejercicios integradores</a></li>
+    <li><a href="#recursos"><span class="num">05</span> Enlaces y recursos oficiales</a></li>
+  </ol>
+</nav>
+
+<!-- ========================================== -->
+<!-- MODULE 1: CVSS -->
+<!-- ========================================== -->
+<section class="module" id="mod1">
+  <div class="module-header">
+    <div class="module-icon blue">📊</div>
+    <div>
+      <h2>Módulo 1 — CVSS</h2>
+      <p>Calculadora y análisis de vectores de vulnerabilidad</p>
+    </div>
+  </div>
+
+  <div class="concept">
+    <h3>¿Qué es un vector CVSS?</h3>
+    <p>Un vector CVSS es una cadena de texto estandarizada que codifica las características de una vulnerabilidad. Cada parámetro describe un aspecto distinto del riesgo. La calculadora oficial traduce estos parámetros en una puntuación numérica de 0.0 a 10.0.</p>
+    <p>Ejemplo de un vector completo:</p>
+    <div class="vector-box">CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</div>
+    <p>Este vector se lee de izquierda a derecha. Cada par <strong>parámetro:valor</strong> describe un aspecto de la vulnerabilidad.</p>
+  </div>
+
+  <div class="concept">
+    <h3>Referencia rápida de parámetros</h3>
+    <table class="ref-table">
+      <thead>
+        <tr><th>Parámetro</th><th>Significado</th><th>Valores posibles</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>AV</code></td>
+          <td><strong>Vector de Ataque</strong> — ¿Desde dónde puede atacar?</td>
+          <td><code>N</code> Red &nbsp; <code>A</code> Adyacente &nbsp; <code>L</code> Local &nbsp; <code>P</code> Físico</td>
+        </tr>
+        <tr>
+          <td><code>AC</code></td>
+          <td><strong>Complejidad de Ataque</strong> — ¿Qué tan fácil es ejecutarlo?</td>
+          <td><code>L</code> Baja (fácil) &nbsp; <code>H</code> Alta (difícil)</td>
+        </tr>
+        <tr>
+          <td><code>PR</code></td>
+          <td><strong>Privilegios Requeridos</strong> — ¿Necesita credenciales?</td>
+          <td><code>N</code> Ninguno &nbsp; <code>L</code> Bajo &nbsp; <code>H</code> Alto</td>
+        </tr>
+        <tr>
+          <td><code>UI</code></td>
+          <td><strong>Interacción del Usuario</strong> — ¿La víctima debe hacer algo?</td>
+          <td><code>N</code> Ninguna &nbsp; <code>R</code> Requerida</td>
+        </tr>
+        <tr>
+          <td><code>S</code></td>
+          <td><strong>Alcance</strong> — ¿Afecta solo al componente vulnerable?</td>
+          <td><code>U</code> Sin cambio &nbsp; <code>C</code> Cambiado (afecta otros)</td>
+        </tr>
+        <tr>
+          <td><code>C</code></td>
+          <td><strong>Impacto en Confidencialidad</strong></td>
+          <td><code>N</code> Ninguno &nbsp; <code>L</code> Bajo &nbsp; <code>H</code> Alto</td>
+        </tr>
+        <tr>
+          <td><code>I</code></td>
+          <td><strong>Impacto en Integridad</strong></td>
+          <td><code>N</code> Ninguno &nbsp; <code>L</code> Bajo &nbsp; <code>H</code> Alto</td>
+        </tr>
+        <tr>
+          <td><code>A</code></td>
+          <td><strong>Impacto en Disponibilidad</strong></td>
+          <td><code>N</code> Ninguno &nbsp; <code>L</code> Bajo &nbsp; <code>H</code> Alto</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="concept">
+    <h3>Escala de severidad</h3>
+    <table class="ref-table">
+      <thead><tr><th>Puntuación</th><th>Severidad</th><th>¿Qué significa operativamente?</th></tr></thead>
+      <tbody>
+        <tr><td><code>0.0</code></td><td>Ninguna</td><td>Sin riesgo identificable</td></tr>
+        <tr><td><code>0.1 – 3.9</code></td><td>Baja</td><td>Se gestiona en mantenimiento ordinario</td></tr>
+        <tr><td><code>4.0 – 6.9</code></td><td>Media</td><td>Se planifica corrección en el ciclo regular de parches</td></tr>
+        <tr><td><code>7.0 – 8.9</code></td><td>Alta</td><td>Atención prioritaria en horas o días</td></tr>
+        <tr><td><code>9.0 – 10.0</code></td><td>Crítica</td><td>Respuesta inmediata, puede comprometer toda la infraestructura</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TUTORIAL: How to use the calculator -->
+  <div class="concept">
+    <h3>Tutorial: Usar la calculadora CVSS paso a paso</h3>
+    <div class="steps">
+      <div class="step">
+        <h4>Abrir la calculadora oficial</h4>
+        <p>Ir a <a href="https://www.first.org/cvss/calculator/3.1" target="_blank">https://www.first.org/cvss/calculator/3.1</a></p>
+      </div>
+      <div class="step">
+        <h4>Ingresar el vector</h4>
+        <p>En la parte superior hay un campo de texto donde puede pegar un vector completo (por ejemplo: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code>). La calculadora seleccionará automáticamente cada parámetro y mostrará la puntuación.</p>
+      </div>
+      <div class="step">
+        <h4>Leer el resultado</h4>
+        <p>La calculadora mostrará la <strong>puntuación base</strong> (número de 0.0 a 10.0) y el <strong>nivel de severidad</strong> (Baja, Media, Alta o Crítica). También puede hacer clic en cada parámetro para ver su definición.</p>
+      </div>
+      <div class="step">
+        <h4>Construir un vector manualmente</h4>
+        <p>También puede hacer clic en cada opción para ir construyendo el vector desde cero. Esto es útil cuando usted está evaluando una vulnerabilidad y necesita asignar cada valor según las características técnicas del escenario.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <p><strong>Consejo para la evaluación:</strong> Cuando le pidan "traducir un vector a lenguaje operativo", no basta con decir "AV:N significa Network". Debe explicar qué implica para la organización: "El ataque se puede ejecutar remotamente desde cualquier lugar de internet, lo que aumenta significativamente la exposición".</p>
+  </div>
+
+  <!-- EXERCISES -->
+  <div class="exercise">
+    <div class="exercise-label purple">Ejercicio 1 — Decodificación</div>
+    <h4>Analice el siguiente vector CVSS</h4>
+    <div class="vector-box">CVSS:3.1/AV:A/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:H</div>
+    <ol>
+      <li>Traduzca cada componente a lenguaje comprensible para un mando no técnico.</li>
+      <li>Use la calculadora para obtener la puntuación y severidad.</li>
+      <li>¿Qué pilar de la Tríada CIA es el más afectado y por qué?</li>
+    </ol>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p><code>AV:A</code> — El atacante debe estar en la red adyacente (por ejemplo, WiFi local), no puede atacar desde internet.</p>
+        <p><code>AC:L</code> — Es fácil de ejecutar, sin condiciones especiales.</p>
+        <p><code>PR:N</code> — No necesita credenciales previas.</p>
+        <p><code>UI:R</code> — La víctima debe realizar alguna acción (abrir un enlace, por ejemplo).</p>
+        <p><code>S:U</code> — El impacto se limita al componente afectado.</p>
+        <p><code>C:L/I:N/A:H</code> — Poco impacto en confidencialidad, ninguno en integridad, pero alto en disponibilidad.</p>
+        <p><strong>Pilar más afectado:</strong> Disponibilidad (A:H). El servicio podría quedar completamente fuera de operación.</p>
+        <p>La puntuación resultante es <strong>6.3 (Media)</strong>.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-label purple">Ejercicio 2 — Construcción de vector</div>
+    <h4>Construya el vector CVSS para este escenario:</h4>
+    <p>Se descubre una vulnerabilidad en el portal web institucional accesible desde internet. Un atacante sin credenciales puede inyectar código SQL fácilmente (sin condiciones especiales). No requiere ninguna acción de la víctima. El impacto se limita a la base de datos del portal: se pueden leer todos los registros (confidencialidad total comprometida), modificar datos (integridad comprometida parcialmente), pero el servicio sigue operativo (sin impacto en disponibilidad). El impacto no se extiende a otros sistemas.</p>
+    <ol>
+      <li>Asigne cada parámetro CVSS según la descripción.</li>
+      <li>Ingrese su vector en la calculadora y verifique la puntuación.</li>
+      <li>¿Qué nivel de severidad obtiene? ¿Le parece apropiado para el escenario?</li>
+    </ol>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p>El vector sería: <code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N</code></p>
+        <p><code>AV:N</code> — Accesible desde internet.</p>
+        <p><code>AC:L</code> — Fácil de explotar.</p>
+        <p><code>PR:N</code> — Sin credenciales.</p>
+        <p><code>UI:N</code> — Sin interacción de la víctima.</p>
+        <p><code>S:U</code> — Solo afecta al portal.</p>
+        <p><code>C:H</code> — Se pueden leer todos los registros.</p>
+        <p><code>I:L</code> — Modificación parcial.</p>
+        <p><code>A:N</code> — El servicio sigue operativo.</p>
+        <p>Puntuación: <strong>8.2 (Alta)</strong>. Es apropiado dado que es explotable remotamente, sin credenciales y con alto impacto en confidencialidad.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="exercise warn-border">
+    <div class="exercise-label warn">Ejercicio 3 — Comparación de severidad</div>
+    <h4>Compare estos dos vectores y determine cuál debería corregirse primero:</h4>
+    <div class="vector-box">Vector A: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H</div>
+    <div class="vector-box">Vector B: CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:H/I:H/A:N</div>
+    <ol>
+      <li>Calcule la puntuación de ambos vectores.</li>
+      <li>¿Cuál tiene mayor puntuación CVSS?</li>
+      <li>Más allá de la puntuación, argumente cuál representa mayor riesgo real para una institución policial con servidores expuestos a internet.</li>
+    </ol>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p><strong>Vector A: 7.5 (Alta)</strong> — Ataque remoto, fácil, sin credenciales. Solo afecta disponibilidad.</p>
+        <p><strong>Vector B: 5.0 (Media)</strong> — Requiere acceso local, es difícil, necesita privilegios altos e interacción de la víctima. Pero compromete confidencialidad e integridad.</p>
+        <p><strong>Análisis contextual:</strong> El Vector A tiene mayor puntuación y mayor riesgo real para la institución porque es explotable remotamente por cualquier persona sin credenciales. Aunque solo afecta disponibilidad, la facilidad de ejecución y exposición lo hacen prioritario. El Vector B, pese a su impacto en C e I, requiere tantas condiciones previas que su explotación en la práctica es poco probable.</p>
+        <p>Este ejercicio demuestra que la puntuación CVSS y el contexto operativo deben analizarse juntos.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- MODULE 2: CVE -->
+<!-- ========================================== -->
+<section class="module" id="mod2">
+  <div class="module-header">
+    <div class="module-icon purple">🔍</div>
+    <div>
+      <h2>Módulo 2 — CVE y cve.org</h2>
+      <p>Consulta y análisis de vulnerabilidades reales</p>
+    </div>
+  </div>
+
+  <div class="concept">
+    <h3>¿Qué es cve.org?</h3>
+    <p>CVE.org es el sitio oficial del programa CVE, administrado por MITRE Corporation. Es la fuente primaria y autoritativa para consultar vulnerabilidades conocidas. Cada entrada contiene:</p>
+    <ul>
+      <li><strong>Identificador CVE</strong> — Código único universal (ejemplo: CVE-2021-44228)</li>
+      <li><strong>Descripción</strong> — Qué software afecta y qué permite al atacante</li>
+      <li><strong>Vector y puntuación CVSS</strong> — Evaluación técnica de severidad</li>
+      <li><strong>Referencias</strong> — Avisos del fabricante, parches disponibles, reportes</li>
+      <li><strong>Productos afectados (CPE)</strong> — Lista de software y versiones vulnerables</li>
+    </ul>
+  </div>
+
+  <div class="concept">
+    <h3>Tutorial: Buscar y analizar un CVE en cve.org</h3>
+    <div class="steps">
+      <div class="step">
+        <h4>Acceder a cve.org</h4>
+        <p>Ir a <a href="https://www.cve.org/" target="_blank">https://www.cve.org/</a> y utilizar la barra de búsqueda en la parte superior de la página.</p>
+      </div>
+      <div class="step">
+        <h4>Buscar por identificador CVE</h4>
+        <p>En el campo de búsqueda, escriba el código CVE completo (ejemplo: <code>CVE-2021-44228</code>) y presione Enter. Aparecerá la ficha completa de la vulnerabilidad.</p>
+      </div>
+      <div class="step">
+        <h4>Leer la ficha de vulnerabilidad</h4>
+        <p>Observe: la <strong>descripción</strong> explica qué software afecta y qué permite. Más abajo encontrará el <strong>vector CVSS</strong> con su puntuación y un enlace para calcularlo.</p>
+      </div>
+      <div class="step">
+        <h4>Revisar referencias y productos afectados</h4>
+        <p>Baje en la página para ver los <strong>avisos de seguridad</strong> (enlaces del fabricante) y la sección <strong>CPE</strong> que lista las versiones exactas afectadas. Esto le indica qué actualizar.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept">
+    <h3>Anatomía de un identificador CVE</h3>
+    <div class="vector-box">CVE-2021-44228</div>
+    <table class="ref-table">
+      <thead><tr><th>Parte</th><th>Valor</th><th>Significado</th></tr></thead>
+      <tbody>
+        <tr><td>Prefijo</td><td><code>CVE</code></td><td>Indica que es un identificador del sistema CVE</td></tr>
+        <tr><td>Año</td><td><code>2021</code></td><td>Año en que se registró o descubrió la vulnerabilidad</td></tr>
+        <tr><td>Secuencia</td><td><code>44228</code></td><td>Número único asignado a esta vulnerabilidad específica</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <p><strong>Importante:</strong> El año del CVE no siempre coincide con la fecha del ataque. CVE-2017-0144 (EternalBlue) fue descubierta en 2017, pero los ataques masivos de WannaCry y NotPetya ocurrieron meses después. Un CVE antiguo con exploit disponible sigue siendo peligroso si los sistemas no fueron parchados.</p>
+  </div>
+
+  <!-- EXERCISES -->
+  <div class="exercise">
+    <div class="exercise-label purple">Ejercicio 4 — Investigación de CVE</div>
+    <h4>Investigue CVE-2021-44228 (Log4Shell)</h4>
+    <ol>
+      <li>Busque este CVE en cve.org. ¿Qué software y componente específico es vulnerable?</li>
+      <li>¿Cuál es su puntuación CVSS y nivel de severidad?</li>
+      <li>Lea la descripción: ¿qué puede hacer un atacante que explote esta vulnerabilidad?</li>
+      <li>¿Por qué este CVE fue tan mediático? ¿Qué característica del software afectado amplificó el impacto?</li>
+    </ol>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p><strong>Software:</strong> Apache Log4j 2, una biblioteca de registro (logging) para Java usada en miles de aplicaciones corporativas.</p>
+        <p><strong>CVSS: 10.0 (Crítica)</strong> — La puntuación máxima posible.</p>
+        <p><strong>Impacto:</strong> Un atacante puede ejecutar código arbitrario remotamente simplemente enviando una cadena de texto especialmente diseñada a cualquier aplicación que use Log4j para registrar datos.</p>
+        <p><strong>Amplificación:</strong> Log4j es una biblioteca omnipresente en el ecosistema Java: servidores web, aplicaciones empresariales, servicios en la nube. Miles de aplicaciones eran vulnerables sin saberlo, porque la vulnerabilidad estaba en una dependencia, no en su propio código.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="exercise">
+    <div class="exercise-label purple">Ejercicio 5 — Comparación de CVEs</div>
+    <h4>Compare dos vulnerabilidades famosas:</h4>
+    <p>Busque en cve.org los siguientes CVE y complete una tabla comparativa:</p>
+    <div class="vector-box">CVE-2014-0160 (Heartbleed)    vs.    CVE-2014-6271 (Shellshock)</div>
+    <ol>
+      <li>¿Qué software afecta cada uno?</li>
+      <li>¿Cuál tiene mayor puntuación CVSS?</li>
+      <li>¿Qué pilar de la Tríada CIA compromete principalmente cada uno?</li>
+      <li>¿Cuál cree usted que representaría mayor riesgo para la red institucional? Fundamente.</li>
+    </ol>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p><strong>Heartbleed (CVE-2014-0160):</strong> Afecta OpenSSL. CVSS 7.5 (Alta). Permite leer memoria del servidor de forma remota, comprometiendo la Confidencialidad (claves privadas, credenciales, datos sensibles).</p>
+        <p><strong>Shellshock (CVE-2014-6271):</strong> Afecta GNU Bash. CVSS 9.8 (Crítica). Permite ejecución remota de código con privilegios del servidor. Compromete Confidencialidad, Integridad y Disponibilidad simultáneamente.</p>
+        <p><strong>Mayor riesgo:</strong> Shellshock tiene mayor puntuación y permite control total del sistema (ejecución de código), no solo lectura. Sin embargo, Heartbleed afecta a OpenSSL que es omnipresente en comunicaciones cifradas. Ambas respuestas son válidas si están bien fundamentadas.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- MODULE 3: MITRE ATT&CK -->
+<!-- ========================================== -->
+<section class="module" id="mod3">
+  <div class="module-header">
+    <div class="module-icon green">🗺️</div>
+    <div>
+      <h2>Módulo 3 — MITRE ATT&CK</h2>
+      <p>Navegación, tácticas, técnicas y mapeo de adversarios</p>
+    </div>
+  </div>
+
+  <div class="concept">
+    <h3>Estructura del framework</h3>
+    <p>MITRE ATT&CK organiza el comportamiento de los adversarios en tres niveles jerárquicos:</p>
+    <table class="ref-table">
+      <thead><tr><th>Nivel</th><th>Pregunta que responde</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Táctica</strong></td><td>¿POR QUÉ? — El objetivo del adversario</td><td>Movimiento Lateral</td></tr>
+        <tr><td><strong>Técnica</strong></td><td>¿CÓMO? — El método empleado</td><td>T1021 — Servicios Remotos</td></tr>
+        <tr><td><strong>Subtécnica</strong></td><td>¿CÓMO exactamente? — La variante específica</td><td>T1021.001 — Protocolo de Escritorio Remoto (RDP)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="concept">
+    <h3>Las 14 tácticas de ATT&CK Enterprise</h3>
+    <table class="ref-table">
+      <thead><tr><th>#</th><th>Táctica</th><th>Objetivo del adversario</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><strong>Reconocimiento</strong></td><td>Recopilar información para planificar el ataque</td></tr>
+        <tr><td>2</td><td><strong>Desarrollo de Recursos</strong></td><td>Preparar infraestructura y herramientas para el ataque</td></tr>
+        <tr><td>3</td><td><strong>Acceso Inicial</strong></td><td>Obtener un punto de entrada a la red víctima</td></tr>
+        <tr><td>4</td><td><strong>Ejecución</strong></td><td>Ejecutar código malicioso en el sistema comprometido</td></tr>
+        <tr><td>5</td><td><strong>Persistencia</strong></td><td>Mantener acceso al sistema a pesar de reinicios o cambios</td></tr>
+        <tr><td>6</td><td><strong>Escalamiento de Privilegios</strong></td><td>Obtener permisos de mayor nivel (ej: de usuario a administrador)</td></tr>
+        <tr><td>7</td><td><strong>Evasión de Defensas</strong></td><td>Evitar ser detectado por herramientas de seguridad</td></tr>
+        <tr><td>8</td><td><strong>Acceso a Credenciales</strong></td><td>Robar nombres de usuario, contraseñas o tokens</td></tr>
+        <tr><td>9</td><td><strong>Descubrimiento</strong></td><td>Explorar el entorno para entender la red y sus recursos</td></tr>
+        <tr><td>10</td><td><strong>Movimiento Lateral</strong></td><td>Moverse a otros sistemas dentro de la red</td></tr>
+        <tr><td>11</td><td><strong>Recolección</strong></td><td>Reunir datos de interés para su objetivo</td></tr>
+        <tr><td>12</td><td><strong>Comando y Control</strong></td><td>Comunicarse con los sistemas comprometidos para dirigirlos</td></tr>
+        <tr><td>13</td><td><strong>Exfiltración</strong></td><td>Extraer datos robados fuera de la red víctima</td></tr>
+        <tr><td>14</td><td><strong>Impacto</strong></td><td>Causar daño: destruir, cifrar o interrumpir sistemas</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="concept">
+    <h3>Tutorial: Navegar MITRE ATT&CK paso a paso</h3>
+    <div class="steps">
+      <div class="step">
+        <h4>Acceder a la matriz principal</h4>
+        <p>Ir a <a href="https://attack.mitre.org/" target="_blank">https://attack.mitre.org/</a> y hacer clic en <strong>"Enterprise"</strong> en el menú superior para ver la matriz completa.</p>
+      </div>
+      <div class="step">
+        <h4>Entender la estructura visual</h4>
+        <p>La matriz muestra las <strong>tácticas como columnas</strong> (de izquierda a derecha, reflejando la progresión del ataque). Dentro de cada columna están las <strong>técnicas</strong> como filas. Algunas técnicas tienen un <strong>▸</strong> que indica subtécnicas.</p>
+      </div>
+      <div class="step">
+        <h4>Explorar una técnica</h4>
+        <p>Haga clic en cualquier técnica (ejemplo: "Phishing" bajo Acceso Inicial). La página de detalle muestra: descripción, subtécnicas, procedimientos de grupos reales, mitigaciones y fuentes de detección.</p>
+      </div>
+      <div class="step">
+        <h4>Buscar por código o nombre</h4>
+        <p>Use la barra de búsqueda (lupa) para encontrar una técnica por su código (ej: <code>T1566</code>) o por nombre (ej: "Phishing"). Esto es clave cuando necesita identificar rápidamente una técnica específica.</p>
+      </div>
+      <div class="step">
+        <h4>Explorar grupos de amenaza</h4>
+        <p>En el menú, vaya a <strong>"Groups"</strong>. Aquí puede ver grupos reales de adversarios (APT28, Lazarus, etc.) y las técnicas específicas que utilizan. Esto conecta la teoría con operaciones reales.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <p><strong>Cómo citar una técnica correctamente:</strong> Siempre incluya el código y el nombre. Ejemplo: "T1566.001 — Phishing: Adjunto con código malicioso". Esto demuestra que consultó la fuente oficial y no solo el nombre genérico.</p>
+  </div>
+
+  <!-- EXERCISES -->
+  <div class="exercise green-border">
+    <div class="exercise-label green">Ejercicio 6 — Exploración de técnicas</div>
+    <h4>Navegue la matriz ATT&CK y responda:</h4>
+    <ol>
+      <li>Busque la técnica <code>T1059</code>. ¿A qué táctica pertenece? ¿Cuántas subtécnicas tiene? Nombre al menos 3 subtécnicas.</li>
+      <li>Busque la técnica <code>T1486</code>. ¿Qué hace un adversario que usa esta técnica? ¿En qué ataques reales se ha observado?</li>
+      <li>¿Cuál es la diferencia entre <code>T1566.001</code> y <code>T1566.002</code>? ¿Por qué MITRE las separa como subtécnicas distintas?</li>
+    </ol>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p><strong>T1059 — Intérprete de comandos y scripts:</strong> Pertenece a la táctica Ejecución. Tiene subtécnicas como PowerShell (.001), AppleScript (.002), Shell de Unix (.004), Python (.006), JavaScript (.007), entre otras. MITRE las separa porque cada intérprete implica técnicas de detección y mitigación distintas.</p>
+        <p><strong>T1486 — Datos cifrados para causar impacto:</strong> Pertenece a la táctica Impacto. Es la técnica que describe el cifrado de datos por ransomware. Se observa en WannaCry, Ryuk, LockBit, entre otros.</p>
+        <p><strong>T1566.001 vs .002:</strong> La primera es phishing con adjunto malicioso (archivo) y la segunda es phishing con enlace malicioso (URL). Se separan porque los vectores de entrega, las reglas de detección y las mitigaciones son diferentes.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="exercise green-border">
+    <div class="exercise-label green">Ejercicio 7 — Mapeo de un ataque real</div>
+    <h4>Mapee las fases de este escenario a tácticas y técnicas ATT&CK:</h4>
+    <p>Un grupo de adversarios ejecutó el siguiente ataque contra una organización gubernamental:</p>
+    <ol>
+      <li>Enviaron correos electrónicos con documentos Word que contenían macros maliciosas a funcionarios del departamento de finanzas.</li>
+      <li>Al abrir el documento y habilitar las macros, se instaló un programa que se ejecuta automáticamente cada vez que se enciende el equipo.</li>
+      <li>El programa recolectó las contraseñas almacenadas en el navegador del funcionario.</li>
+      <li>Con esas credenciales, los atacantes accedieron remotamente al servidor de archivos del departamento usando el Escritorio Remoto (RDP).</li>
+      <li>Copiaron documentos financieros confidenciales y los enviaron comprimidos a un servidor externo.</li>
+    </ol>
+    <p><strong>Para cada fase (1 a 5), identifique:</strong> la táctica ATT&CK correspondiente, una técnica con su código T-xxxx, y una breve justificación.</p>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p><strong>Fase 1 — Acceso Inicial:</strong> T1566.001 (Phishing: Adjunto malicioso). Correo con documento Word con macros.</p>
+        <p><strong>Fase 2 — Persistencia:</strong> T1547.001 (Ejecución al inicio: Claves de registro Run). El programa se ejecuta en cada arranque.</p>
+        <p><strong>Fase 3 — Acceso a Credenciales:</strong> T1555.003 (Credenciales de almacenes de contraseñas: Navegadores web). Extracción de contraseñas guardadas en el navegador.</p>
+        <p><strong>Fase 4 — Movimiento Lateral:</strong> T1021.001 (Servicios Remotos: RDP). Uso de credenciales robadas para acceder a otro sistema por escritorio remoto.</p>
+        <p><strong>Fase 5 — Exfiltración:</strong> T1041 (Exfiltración por canal de Comando y Control) o T1048 (Exfiltración por protocolo alternativo). Los datos comprimidos se envían a infraestructura externa.</p>
+        <p><em>Nota: Pueden existir técnicas alternativas válidas. Lo importante es la coherencia entre el escenario y la técnica seleccionada.</em></p>
+      </div>
+    </details>
+  </div>
+
+  <div class="exercise green-border">
+    <div class="exercise-label green">Ejercicio 8 — Investigación de grupo de amenaza</div>
+    <h4>Investigue un grupo APT en MITRE ATT&CK</h4>
+    <ol>
+      <li>Vaya a <a href="https://attack.mitre.org/groups/" target="_blank">https://attack.mitre.org/groups/</a> y seleccione el grupo <strong>APT28</strong> (también conocido como Fancy Bear).</li>
+      <li>¿Qué país u organización se atribuye como origen de este grupo?</li>
+      <li>Identifique 3 técnicas que ATT&CK documenta como empleadas por este grupo. Señale la táctica y el código de cada una.</li>
+      <li>¿Por qué es útil para una institución de seguridad conocer el perfil de técnicas de un grupo de amenaza?</li>
+    </ol>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p><strong>APT28:</strong> Grupo atribuido a la inteligencia militar rusa (GRU, Unidad 26165). También conocido como Fancy Bear, Sofacy, Sednit.</p>
+        <p><strong>Técnicas documentadas (ejemplos):</strong></p>
+        <p>— T1566.001 (Acceso Inicial: Phishing con adjunto) — correos con documentos maliciosos.</p>
+        <p>— T1053.005 (Ejecución / Persistencia: Tareas programadas) — uso de tareas del sistema operativo para mantener acceso.</p>
+        <p>— T1071.001 (Comando y Control: Protocolos web) — comunicación C2 usando HTTP/HTTPS para mezclarse con el tráfico legítimo.</p>
+        <p><strong>Utilidad:</strong> Conocer las técnicas de un grupo permite priorizar defensas y detecciones específicas. Si una institución es un blanco probable de APT28, puede focalizar sus controles en las técnicas documentadas, en lugar de intentar cubrir las cientos de técnicas existentes.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- MODULE 4: INTEGRADORES -->
+<!-- ========================================== -->
+<section class="module" id="mod4">
+  <div class="module-header">
+    <div class="module-icon blue">🧩</div>
+    <div>
+      <h2>Módulo 4 — Ejercicios Integradores</h2>
+      <p>Combinando CVSS, CVE y MITRE ATT&CK en un solo análisis</p>
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <span class="callout-icon">🎯</span>
+    <p><strong>Estos ejercicios simulan el tipo de razonamiento que se espera en la evaluación.</strong> No son las preguntas de la prueba, pero practican las mismas competencias: consultar herramientas oficiales, interpretar datos técnicos y traducirlos a lenguaje operativo.</p>
+  </div>
+
+  <div class="exercise warn-border">
+    <div class="exercise-label warn">Ejercicio 9 — Análisis completo de CVE</div>
+    <h4>Analice CVE-2019-0708 (BlueKeep)</h4>
+    <p>Usando cve.org y MITRE ATT&CK:</p>
+    <ol>
+      <li><strong>cve.org:</strong> Busque el CVE. ¿Qué servicio de Windows afecta? ¿Cuál es su puntuación CVSS y vector completo?</li>
+      <li><strong>Traducción del vector:</strong> Traduzca cada componente del vector CVSS a lenguaje operativo. ¿Qué hace esta combinación especialmente peligrosa?</li>
+      <li><strong>MITRE ATT&CK:</strong> Identifique al menos 2 tácticas que un adversario podría ejecutar usando esta vulnerabilidad. Para cada una, señale la técnica con su código.</li>
+      <li><strong>Contexto institucional:</strong> Si este servicio estuviera activo y expuesto en la red de su institución, ¿qué recomendación daría al mando? Fundamente usando los datos obtenidos.</li>
+    </ol>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p><strong>CVE-2019-0708:</strong> Afecta el servicio de Escritorio Remoto (RDP) de Windows. CVSS 9.8 (Crítica).</p>
+        <p><strong>Vector:</strong> <code>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</code> — ataque remoto, fácil, sin credenciales, sin interacción, impacto total en los tres pilares CIA. Es una vulnerabilidad "wormable" (se puede propagar automáticamente como gusano).</p>
+        <p><strong>Tácticas ATT&CK posibles:</strong></p>
+        <p>— Acceso Inicial: T1190 (Explotación de aplicación pública) — el servicio RDP es accesible por red.</p>
+        <p>— Ejecución: T1203 (Explotación para ejecución en el cliente) — la vulnerabilidad permite ejecución remota de código.</p>
+        <p>— Movimiento Lateral: T1210 (Explotación de servicios remotos) — podría propagarse a otros equipos con RDP activo.</p>
+        <p><strong>Recomendación:</strong> Desactivar inmediatamente el servicio RDP en equipos expuestos a internet, aplicar el parche del fabricante (MS-2019-0708), restringir RDP solo a conexiones VPN internas, implementar autenticación a nivel de red (NLA).</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="exercise warn-border">
+    <div class="exercise-label warn">Ejercicio 10 — De la alerta al informe</div>
+    <h4>Escenario: Alerta de seguridad en la red institucional</h4>
+    <p>El sistema de detección de intrusiones genera una alerta sobre actividad sospechosa asociada a <strong>CVE-2020-1472</strong>. Su jefatura le solicita un informe breve. Usando las herramientas oficiales, elabore:</p>
+    <ol>
+      <li><strong>Identificación:</strong> ¿Qué vulnerabilidad es? ¿Qué nombre común tiene? ¿Qué componente de Windows afecta?</li>
+      <li><strong>Evaluación técnica:</strong> Puntuación CVSS, vector y traducción a lenguaje operativo.</li>
+      <li><strong>Mapeo de amenaza:</strong> ¿Qué podría hacer un atacante? Mapee a al menos 2 tácticas de ATT&CK con técnicas específicas.</li>
+      <li><strong>Recomendación al mando:</strong> En 3-4 oraciones, ¿qué acciones inmediatas recomienda? Use los datos técnicos como respaldo de su recomendación.</li>
+    </ol>
+    <details>
+      <summary>Ver orientación de respuesta</summary>
+      <div class="hint-content">
+        <p><strong>CVE-2020-1472 — Zerologon:</strong> Vulnerabilidad en el protocolo Netlogon de Windows. Afecta controladores de dominio.</p>
+        <p><strong>CVSS: 10.0 (Crítica)</strong>. Vector: <code>AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code>. Puntuación máxima: remoto, fácil, sin credenciales, sin interacción, alcance cambiado, impacto total.</p>
+        <p><strong>Impacto:</strong> Un atacante puede obtener control total del controlador de dominio (el "cerebro" de la red Windows) en segundos. Desde ahí puede controlar todas las cuentas, equipos y recursos de la red.</p>
+        <p><strong>Tácticas ATT&CK:</strong></p>
+        <p>— Escalamiento de Privilegios: T1068 (Explotación para escalamiento) — de usuario sin privilegios a control total del dominio.</p>
+        <p>— Acceso a Credenciales: T1003 (Volcado de credenciales del SO) — con control del dominio puede extraer todas las credenciales.</p>
+        <p><strong>Recomendación:</strong> Aplicar inmediatamente el parche de seguridad en todos los controladores de dominio. Verificar logs de Netlogon en busca de intentos de explotación. Restringir el acceso de red al servicio Netlogon solo a sistemas autorizados. Considerar la activación del modo de aplicación forzada descrito en el aviso de Microsoft.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ========================================== -->
+<!-- RESOURCES -->
+<!-- ========================================== -->
+<section class="module" id="recursos">
+  <div class="module-header">
+    <div class="module-icon blue">🔗</div>
+    <div>
+      <h2>Módulo 5 — Enlaces y Recursos</h2>
+      <p>Herramientas oficiales autorizadas para la evaluación</p>
+    </div>
+  </div>
+
+  <div class="link-grid">
+    <a href="https://www.first.org/cvss/calculator/3.1" target="_blank" class="link-card">
+      <span class="icon">📊</span>
+      <span>Calculadora CVSS 3.1</span>
+    </a>
+    <a href="https://www.cve.org/" target="_blank" class="link-card">
+      <span class="icon">🔍</span>
+      <span>cve.org — Búsqueda de CVE</span>
+    </a>
+    <a href="https://attack.mitre.org/" target="_blank" class="link-card">
+      <span class="icon">🗺️</span>
+      <span>MITRE ATT&CK</span>
+    </a>
+    <a href="https://cve.mitre.org/" target="_blank" class="link-card">
+      <span class="icon">📋</span>
+      <span>Base de datos CVE</span>
+    </a>
+    <a href="https://attack.mitre.org/groups/" target="_blank" class="link-card">
+      <span class="icon">👥</span>
+      <span>Grupos de amenaza ATT&CK</span>
+    </a>
+    <a href="https://attack.mitre.org/techniques/enterprise/" target="_blank" class="link-card">
+      <span class="icon">⚙️</span>
+      <span>Técnicas ATT&CK Enterprise</span>
+    </a>
+  </div>
+
+  <div class="callout info" style="margin-top: 24px;">
+    <span class="callout-icon">📌</span>
+    <p><strong>Para la evaluación:</strong> Familiarícese con la navegación de estos sitios <em>antes</em> de la prueba. El tiempo es limitado (60 minutos) y saber exactamente dónde buscar la información hará la diferencia. No se trata de memorizar datos, sino de saber encontrarlos, interpretarlos y comunicarlos.</p>
+  </div>
+</section>
+
+</div>
+
+<footer class="footer">
+  <p>Guía Práctica de Herramientas de Ciberseguridad — Material de estudio</p>
+  <p style="margin-top: 4px; font-size: 12px; color: #475569;">Postítulo de Especialidad en Inteligencia Policial — Comisario Alexander Moreno Núñez</p>
+</footer>
+
+</body>
+</html>
